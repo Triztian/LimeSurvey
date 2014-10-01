@@ -279,6 +279,9 @@ function retrieveAnswers($ia)
         case '*': // Equation
             $values=do_equation($ia);
             break;
+        case '?':
+            $values = do_fuzzy_question($ia);
+            break;
     } //End Switch
 
     if (isset($values)) //Break apart $values array returned from switch
@@ -2172,6 +2175,7 @@ function do_ranking($ia)
         $answer .="</li>";
         $inputnames[]=$myfname;
     }
+
     $answer .="</ul>"
         . "<div style='display:none' id='ranking-{$ia[0]}-maxans'>{".$max_answers."}</div>"
         . "<div style='display:none' id='ranking-{$ia[0]}-minans'>{".$min_answers."}</div>"
@@ -2218,6 +2222,26 @@ function do_ranking($ia)
     ." -->\n"
     ."</script>\n";
     return array($answer, $inputnames);
+}
+
+/**
+ * Create the HTML of a question that uses the HTML5 slider control to define fuzzy values.
+ *
+ * @param ia The input array containing the questions information.
+ */
+function do_fuzzy_question($ia) {
+    global $thissurvey;
+    $attrs = getQuestionAttributes($ia[0], $ia[4]);
+
+    $html = new HtmlTag('input', array('type', 'range'));
+    $html->addAttr('name', $ia[1]);
+
+    $ats = array('min', 'max', 'step');
+    foreach($ats as $a) 
+        $html->addAttr($a, $attrs[$a]);
+
+    $inputnames = array($html->getAttr('name'));
+    return array($html->getHTML(), $inputnames);
 }
 
 
