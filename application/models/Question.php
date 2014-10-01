@@ -628,6 +628,13 @@
                     'hasdefaultvalues' => 0,
                     'assessable' => 0,
                     'answerscales' => 0),
+                '?' => array(
+                    'description' => 'Fuzzy Range Question',
+                    'group' => gT("Mask questions"),
+                    'subquestions' => 0,
+                    'hasdefaultvalues' => 0,
+                    'assessable' => 0,
+                    'answerscales' => 0),
             );
             /**
              * @todo Check if this actually does anything, since the values are arrays.
