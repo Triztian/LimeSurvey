@@ -169,7 +169,8 @@ class SurveyRuntimeHelper {
     * @param mixed $surveyid
     * @param mixed $args
     */
-    function run($surveyid,$args) {
+    function run($surveyid, $args) {
+        xdebug_break();
         global $errormsg;
         extract($args);
 
@@ -414,6 +415,7 @@ class SurveyRuntimeHelper {
             if ($surveyMode != 'survey' && $_SESSION[$LEMsessid]['step'] == 0)
             {
                 $_SESSION[$LEMsessid]['test']=time();
+                xdebug_break();
                 display_first_page();
                 Yii::app()->end(); // So we can still see debug messages
             }
@@ -836,6 +838,7 @@ class SurveyRuntimeHelper {
                 }
             }
 
+            //
             // TMSW - could iterate through LEM::currentQset instead
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
@@ -848,8 +851,11 @@ class SurveyRuntimeHelper {
                     {
                         continue;
                     }
+
+                    xdebug_break();
+
                     $qidattributes = getQuestionAttributeValues($ia[0], $ia[4]);
-                    if ($ia[4] != '*' && ($qidattributes === false || !isset($qidattributes['hidden']) || $qidattributes['hidden'] == 1))
+                    if ($ia[4] != '*' && ($qidattributes === false || isset($qidattributes['hidden']) || $qidattributes['hidden'] == 1))
                     {
                         continue;
                     }

@@ -1,4 +1,5 @@
 <?php
+include 'application/helpers/HtmlTag.php';
 
 /*
  *---------------------------------------------------------------

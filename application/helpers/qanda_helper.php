@@ -72,12 +72,11 @@ function setNoAnswerMode($thissurvey)
 * @param mixed $ia
 * @return mixed
 */
-function retrieveAnswers($ia)
-{
+function retrieveAnswers($ia) {
     //globalise required config variables
     global $thissurvey; //These are set by index.php
 
-    //$clang = Yii::app()->lang;
+    xdebug_break();
     $clang = Yii::app()->lang;
 
     //DISPLAY
@@ -117,8 +116,7 @@ function retrieveAnswers($ia)
     ,'essentials' => ''
     );
 
-    switch ($ia[4])
-    {
+    switch ($ia[4]) {
         case 'X': //BOILERPLATE QUESTION
             $values = do_boilerplate($ia);
             break;
@@ -177,25 +175,6 @@ function retrieveAnswers($ia)
                     . $clang->gT('Check any that apply').'</span>';
                     $question_text['help'] = $clang->gT('Check any that apply');
                 }
-                //                else
-                //                {
-                //                    if ($maxansw && $minansw)
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->gT("Check between %d and %d answers"), $minansw, $maxansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->gT("Check between %d and %d answers"), $minansw, $maxansw);
-                //                    } elseif ($maxansw)
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->gT("Check at most %d answers"), $maxansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->gT("Check at most %d answers"), $maxansw);
-                //                    } else
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->ngT("Check at least %d answer","Check at least %d answers",$minansw),$minansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->ngT("Check at least %d answer","Check at least %d answers",$minansw),$minansw);
-                //                    }
-                //                }
             }
             break;
 
@@ -279,23 +258,24 @@ function retrieveAnswers($ia)
         case '*': // Equation
             $values=do_equation($ia);
             break;
-        case '?':
-            $values = do_fuzzy_question($ia);
+        case '?': // Fuzzy Question
+            xdebug_break();
+            $values=do_fuzzy_question($ia);
             break;
     } //End Switch
 
-    if (isset($values)) //Break apart $values array returned from switch
-    {
+    //Break apart $values array returned from switch 
+    if (isset($values)) {
         //$answer is the html code to be printed
         //$inputnames is an array containing the names of each input field
-        list($answer, $inputnames)=$values;
+        list($answer, $inputnames) = $values;
     }
 
-    if ($ia[6] == 'Y')
-    {
+    if ($ia[6] == 'Y') {
         $qtitle = '<span class="asterisk">'.$clang->gT('*').'</span>'.$qtitle;
         $question_text['mandatory'] = $clang->gT('*');
     }
+
     //If this question is mandatory but wasn't answered in the last page
     //add a message HIGHLIGHTING the question
     if (($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] != $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['maxstep']) || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] == $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['prevstep'])) {
@@ -321,8 +301,7 @@ function retrieveAnswers($ia)
 
     if (($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] != $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['maxstep']) || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] == $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['prevstep'])) {
         $file_validation_msg = file_validation_message($ia);
-    }
-    else {
+    } else {
         $file_validation_msg = '';
         $isValid = true;    // don't want to show any validation messages.
     }
@@ -346,8 +325,7 @@ function retrieveAnswers($ia)
         $qtitle_custom = '';
 
         $replace=array();
-        foreach($question_text as $key => $value)
-        {
+        foreach($question_text as $key => $value) {
             $find[] = '{QUESTION_'.strtoupper($key).'}'; // Match key words from template
             $replace[] = $value; // substitue text
         };
@@ -392,6 +370,7 @@ function retrieveAnswers($ia)
     // =====================================================
 
     $qanda=array($qtitle, $answer, 'help', $display, $name, $ia[2], $ia[5], $ia[1] );
+
     //New Return
     return array($qanda, $inputnames);
 }
@@ -2111,23 +2090,19 @@ function do_ranking($ia)
     }
     $ansresult = Yii::app()->db->createCommand($ansquery)->query()->readAll();   //Checked
     $anscount= count($ansresult);
-    if (trim($aQuestionAttributes["max_answers"])!='')
-    {
+    if (trim($aQuestionAttributes["max_answers"])!='') {
         $max_answers=trim($aQuestionAttributes["max_answers"]);
     } else {
         $max_answers=$anscount;
     }
     // Get the max number of line needed
-    if(ctype_digit($max_answers) && intval($max_answers)<$anscount)
-    {
+    if(ctype_digit($max_answers) && intval($max_answers)<$anscount) {
         $iMaxLine=$max_answers;
-    }
-    else
-    {
+    } else {
         $iMaxLine=$anscount;
     }
-    if (trim($aQuestionAttributes["min_answers"])!='')
-    {
+
+    if (trim($aQuestionAttributes["min_answers"])!='') {
         $min_answers=trim($aQuestionAttributes["min_answers"]);
     } else {
         $min_answers=0;
@@ -2142,8 +2117,7 @@ function do_ranking($ia)
     }
     $answer .= '<div class="ranking-answers">
     <ul class="answers-list select-list">';
-    for ($i=1; $i<=$iMaxLine; $i++)
-    {
+    for ($i=1; $i<=$iMaxLine; $i++) {
         $myfname=$ia[1].$i;
         $answer .= "\n<li class=\"select-item\">";
         $answer .="<label for=\"answer{$myfname}\">";
@@ -2230,18 +2204,37 @@ function do_ranking($ia)
  * @param ia The input array containing the questions information.
  */
 function do_fuzzy_question($ia) {
-    global $thissurvey;
-    $attrs = getQuestionAttributes($ia[0], $ia[4]);
+    xdebug_break();
+    $rangeHtml = new HtmlTag('input', array(
+        'id' => $ia[1],
+        'name' => $ia[1],
+        'type' => 'range',
+        'min' => '0', 
+        'max' => '100', 
+        'step' => 1, 
+        "type" => 'range', 
+        'onchange' => 'o.value = this.valueAsNumber'
+    ), true);
 
-    $html = new HtmlTag('input', array('type', 'range'));
-    $html->addAttr('name', $ia[1]);
+    $rangeName = $rangeHtml->getAttr('name');
 
-    $ats = array('min', 'max', 'step');
-    foreach($ats as $a) 
-        $html->addAttr($a, $attrs[$a]);
+    $outputHtml = new HtmlTag('output', array(
+        'id' => 'o',
+        'name' => 'o',
+        'onforminput' => "value = $rangeName.valueAsNumber",
+        'for' => $rangeName
+    ), false);
 
-    $inputnames = array($html->getAttr('name'));
-    return array($html->getHTML(), $inputnames);
+
+    $formHtml = new HtmlTag('form', 
+        array('onsubmit' => 'return false'), 
+        false, 
+        array($rangeHtml, $outputHtml)
+    );
+
+    $inputnames = array($rangeHtml->getAttr('name'));
+
+    return array($formHtml->getHTML(), $inputnames);
 }
 
 

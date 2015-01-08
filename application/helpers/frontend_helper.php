@@ -844,6 +844,7 @@ function submitfailed($errormsg='')
 */
 function buildsurveysession($surveyid,$preview=false)
 {
+    xdebug_break();
     Yii::trace('start', 'survey.buildsurveysession');
     global $secerror, $clienttoken;
     global $tokensexist;
@@ -1597,9 +1598,7 @@ function buildsurveysession($surveyid,$preview=false)
                             $_SESSION['survey_'.$surveyid]['startingValues'][$sFieldname]=$_GET[$aRow['parameter']];
                             $_SESSION['survey_'.$surveyid]['startingValues'][$aRow['parameter']]=$_GET[$aRow['parameter']];
                         }
-                    }
-                    else
-                    {
+                    } else {
                         if ($aField['qid']==$aRow['targetqid'])
                         {
                             $_SESSION['survey_'.$surveyid]['startingValues'][$sFieldname]=$_GET[$aRow['parameter']];

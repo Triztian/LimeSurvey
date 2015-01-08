@@ -49,6 +49,8 @@ class index extends CAction {
 
     function action()
     {
+        xdebug_break();
+
         global $surveyid;
         global $thissurvey, $thisstep;
         global $clienttoken, $tokensexist, $token;
@@ -132,6 +134,7 @@ class index extends CAction {
                 if((intval($param['gid']) && $param['action']=='previewgroup')) $previewmode='group';
             }
         }
+
         Yii::app()->setConfig('previewmode',$previewmode);
         if ( $this->_surveyCantBeViewedWithCurrentPreviewAccess($surveyid, $isSurveyActive, $surveyExists) )
         {
@@ -561,6 +564,7 @@ class index extends CAction {
         unset($redata);
         $redata = compact(array_keys(get_defined_vars()));
         Yii::import('application.helpers.SurveyRuntimeHelper');
+        xdebug_break();
         $tmp = new SurveyRuntimeHelper();
         $tmp->run($surveyid,$redata);
 

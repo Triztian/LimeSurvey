@@ -2,6 +2,7 @@
 
 class HtmlTag {
     const VOID_ELEMENT = true;
+
     private $tag;
     private $isVoid = true;
     private $attrs = array();
@@ -18,6 +19,10 @@ class HtmlTag {
         $this->tag = $tag;
         $this->attrs = $attrs;
         $this->isVoid = $isVoid;
+
+        if ( $tag == 'input' )
+            $this->isVoid = true;
+
         if ( !$isVoid )
             $this->children = $children;
     }
@@ -44,6 +49,7 @@ class HtmlTag {
         foreach ($this->attrs as $a => $v) {
             $attrs .= "$a=\"$v\" ";
         }
+
         return $attrs;
     }
 
@@ -51,19 +57,22 @@ class HtmlTag {
      * This function is the one that creates the actual HTML string
      */
     public function getHTML() {
-        $html = "<$tag ";
+        xdebug_break();
+        $html = "<$this->tag ";
         $html .= $this->getAttrString();
         
         if ( $isVoid ) {
             $html .= '/>';
+
         } else {
             $html .= '>';
             foreach($this->children as $c) {
                 $html .= $c->getHTML();
             }
-            $html .= "</ $tag>";
+            $html .= "</ $this->tag>";
         }
 
+        xdebug_break();
         return $html;
     }
 

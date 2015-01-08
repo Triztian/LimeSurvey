@@ -23,6 +23,8 @@ class SurveyController extends LSYii_Controller
      */
     protected function _init()
     {
+        xdebug_break();
+
         parent::_init();
 
         $this->_sessioncontrol();

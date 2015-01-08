@@ -100,7 +100,7 @@ class QuestionAttribute extends LSActiveRecord
     public function getQuestionAttributes($iQuestionID)
     {
         $iQuestionID=(int)$iQuestionID;
-        static $aQuestionAttributesStatic=array();// TODO : replace by Yii::app()->cache
+        //static $aQuestionAttributesStatic=array();// TODO : replace by Yii::app()->cache
         if(isset($aQuestionAttributesStatic[$iQuestionID]))
         {
             return $aQuestionAttributesStatic[$iQuestionID];
@@ -161,7 +161,6 @@ class QuestionAttribute extends LSActiveRecord
         {
             return false; // return false but don't set $aQuestionAttributesStatic[$iQuestionID]
         }
-        $aQuestionAttributesStatic[$iQuestionID]=$aQuestionAttributes;
         return $aQuestionAttributes;
     }
 

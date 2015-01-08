@@ -110,6 +110,7 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
     }
 
     // lets sanitize the survey template
+    xdebug_break();
     if(isset($thissurvey['templatedir']))
     {
         $templatename=$thissurvey['templatedir'];
