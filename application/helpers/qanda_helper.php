@@ -2209,32 +2209,17 @@ function do_fuzzy_question($ia) {
         'id' => $ia[1],
         'name' => $ia[1],
         'type' => 'range',
-        'min' => '0', 
-        'max' => '100', 
-        'step' => 1, 
-        "type" => 'range', 
-        'onchange' => 'o.value = this.valueAsNumber'
+        'min' => '0.00', 
+        'max' => '1.00', 
+        'step' => 0.01, 
+        "type" => 'range'
     ), true);
 
     $rangeName = $rangeHtml->getAttr('name');
 
-    $outputHtml = new HtmlTag('output', array(
-        'id' => 'o',
-        'name' => 'o',
-        'onforminput' => "value = $rangeName.valueAsNumber",
-        'for' => $rangeName
-    ), false);
-
-
-    $formHtml = new HtmlTag('form', 
-        array('onsubmit' => 'return false'), 
-        false, 
-        array($rangeHtml, $outputHtml)
-    );
-
     $inputnames = array($rangeHtml->getAttr('name'));
 
-    return array($formHtml->getHTML(), $inputnames);
+    return array($rangeHtml->getHTML(), $inputnames);
 }
 
 
