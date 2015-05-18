@@ -1,4 +1,5 @@
 <?php
+use application\helpers\HtmlTag;
 /*
 * LimeSurvey
 * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -257,10 +258,6 @@ function retrieveAnswers($ia) {
             break;
         case '*': // Equation
             $values=do_equation($ia);
-            break;
-        case '?': // Fuzzy Question
-            xdebug_break();
-            $values=do_fuzzy_question($ia);
             break;
     } //End Switch
 
@@ -2198,31 +2195,6 @@ function do_ranking($ia)
     return array($answer, $inputnames);
 }
 
-/**
- * Create the HTML of a question that uses the HTML5 slider control to define fuzzy values.
- *
- * @param ia The input array containing the questions information.
- */
-function do_fuzzy_question($ia) {
-    xdebug_break();
-    $rangeHtml = new HtmlTag('input', array(
-        'id' => $ia[1],
-        'name' => $ia[1],
-        'type' => 'range',
-        'min' => '0.00', 
-        'max' => '1.00', 
-        'step' => 0.01, 
-        "type" => 'range'
-    ), true);
-
-    $rangeName = $rangeHtml->getAttr('name');
-
-    $inputnames = array($rangeHtml->getAttr('name'));
-
-    return array($rangeHtml->getHTML(), $inputnames);
-}
-
-
 // ---------------------------------------------------------------
 // TMSW TODO - Can remove DB query by passing in answer list from EM
 function do_multiplechoice($ia)
@@ -3366,8 +3338,7 @@ function do_multiplenumeric($ia)
 
 
 // ---------------------------------------------------------------
-function do_numerical($ia)
-{
+function do_numerical($ia) {
     global $thissurvey;
 
     $clang = Yii::app()->lang;
@@ -3375,52 +3346,43 @@ function do_numerical($ia)
     $answertypeclass = "numeric";
     $checkconditionFunction = "fixnum_checkconditions";
     $aQuestionAttributes = getQuestionAttributeValues($ia[0], $ia[4]);
+
     if (trim($aQuestionAttributes['prefix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']])!='') {
         $prefix=$aQuestionAttributes['prefix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']];
         $extraclass .=" withprefix";
-    }
-    else
-    {
+    } else {
         $prefix = '';
     }
+
     if (trim($aQuestionAttributes['suffix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']])!='') {
         $suffix=$aQuestionAttributes['suffix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']];
         $extraclass .=" withsuffix";
-    }
-    else
-    {
+    } else {
         $suffix = '';
     }
-    if (intval(trim($aQuestionAttributes['maximum_chars']))>0 && intval(trim($aQuestionAttributes['maximum_chars']))<20)
-    {
+
+    if (intval(trim($aQuestionAttributes['maximum_chars']))>0 && intval(trim($aQuestionAttributes['maximum_chars']))<20) {
         // Only maxlength attribute, use textarea[maxlength] jquery selector for textarea
         $maximum_chars= intval(trim($aQuestionAttributes['maximum_chars']));
         $maxlength= " maxlength='{$maximum_chars}' ";
         $extraclass .=" maxchars maxchars-".$maximum_chars;
-    }
-    else
-    {
+    } else {
         $maxlength= " maxlength='20' ";
     }
-    if (trim($aQuestionAttributes['text_input_width'])!='')
-    {
+
+    if (trim($aQuestionAttributes['text_input_width'])!='') {
         $tiwidth=$aQuestionAttributes['text_input_width'];
         $extraclass .=" inputwidth-".trim($aQuestionAttributes['text_input_width']);
-    }
-    else
-    {
+    } else {
         $tiwidth=10;
     }
 
-    if (trim($aQuestionAttributes['num_value_int_only'])==1)
-    {
+    if (trim($aQuestionAttributes['num_value_int_only'])==1) {
         $acomma="";
         $extraclass .=" integeronly";
         $answertypeclass .= " integeronly";
         $integeronly=1;
-    }
-    else
-    {
+    } else {
         $acomma=getRadixPointData($thissurvey['surveyls_numberformat']);
         $acomma = $acomma['separator'];
         $integeronly=0;
@@ -3430,10 +3392,10 @@ function do_numerical($ia)
     $sSeparator = getRadixPointData($thissurvey['surveyls_numberformat']);
     $sSeparator = $sSeparator['separator'];
     // Fix the display value : Value is stored as decimal in SQL then return dot and 0 after dot. Seems only for numerical question type
-    if(strpos($fValue,"."))
-    {
+    if(strpos($fValue,".")) {
         $fValue=rtrim(rtrim($fValue,"0"),".");
     }
+
     $fValue = str_replace('.',$sSeparator,$fValue);
 
     if ($thissurvey['nokeyboard']=='Y')
@@ -3441,21 +3403,48 @@ function do_numerical($ia)
         includeKeypad();
         $extraclass .=" inputkeypad";
         $answertypeclass .= " num-keypad";
-    }
-    else
-    {
+    } else {
         $kpclass = "";
     }
-    // --> START NEW FEATURE - SAVE
-    $answer = "<p class='question answer-item text-item numeric-item {$extraclass}'>"
-    . " <label for='answer{$ia[1]}' class='hide label'>{$clang->gT('Answer')}</label>\n$prefix\t"
-    . "<input class='text {$answertypeclass}' type=\"text\" size=\"$tiwidth\" name=\"$ia[1]\"  title=\"".$clang->gT('Only numbers may be entered in this field.')."\" "
-    . "id=\"answer{$ia[1]}\" value=\"{$fValue}\" onkeyup=\"{$checkconditionFunction}(this.value, this.name, this.type,'onchange',{$integeronly})\" "
-    . " {$maxlength} />\t{$suffix}\n</p>\n";
-    // --> END NEW FEATURE - SAVE
 
-    $inputnames[]=$ia[1];
-    $mandatory=null;
+    $asSlider = (bool)$aQuestionAttributes['numeric_as_slider'];
+    if ($asSlider) {
+        $aQuestionAttributes['min_num_value_n'] = 0.0;
+        $aQuestionAttributes['max_num_value_n'] = 1.0;
+    }
+
+    xdebug_break();
+    $labelHtml = new HtmlTag('label', array(
+        'for'   => "answer{$ia[1]}",
+        'class' => "hide label"
+    ), false, array(
+        "{$clang->gT('Answer')}"
+    ));
+
+    $inputHtml = new HtmlTag('input', array(
+        'id'        => "answer{$ia[1]}",
+        'class'     => "text {$answertypeclass}",
+        'type'      => $asSlider ? 'range' : 'text',
+        'min'       => $aQuestionAttributes['min_num_value_n'],
+        'max'       => $aQuestionAttributes['max_num_value_n'],
+        'step'      => 0.01,
+        'size'      => $tiwidth,
+        'name'      => $ia[1],
+        'title'     => $clang->gT('Only numbers may be entered in this field.'),
+        'value'     => "{$fValue}",
+        'onkeyup'   => "{$checkconditionFunction}(this.value, this.name, this.type,'onchange',{$integeronly})"
+    ), true);
+
+    $ansHtml = new HtmlTag('p', array(
+        'class' => "question answer-item text-item numeric-item {$extraclass}"
+    ), false, array(
+        $labelHtml,
+        $inputHtml
+    ));
+
+    $inputnames[] = $ia[1];
+    $mandatory = null;
+    $answer = (string) $ansHtml;
     return array($answer, $inputnames, $mandatory);
 }
 

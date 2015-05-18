@@ -1,4 +1,5 @@
 <?php
+namespace application\helpers;
 
 class HtmlTag {
     const VOID_ELEMENT = true;
@@ -57,26 +58,26 @@ class HtmlTag {
      * This function is the one that creates the actual HTML string
      */
     public function getHTML() {
-        xdebug_break();
         $html = "<$this->tag ";
         $html .= $this->getAttrString();
         
-        if ( $isVoid ) {
+        if ( $this->isVoid ) {
             $html .= '/>';
 
         } else {
             $html .= '>';
             foreach($this->children as $c) {
-                $html .= $c->getHTML();
+                $html .= (string) $c;
             }
-            $html .= "</ $this->tag>";
+            // Make sure that there is no space after / otherwise
+            // it will be sanitized and ignored
+            $html .= "</$this->tag>";
         }
 
-        xdebug_break();
         return $html;
     }
 
     public function __toString() {
-        return $html->getHTML();
+        return $this->getHTML();
     }
 }

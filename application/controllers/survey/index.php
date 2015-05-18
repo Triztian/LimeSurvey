@@ -49,7 +49,6 @@ class index extends CAction {
 
     function action()
     {
-        xdebug_break();
 
         global $surveyid;
         global $thissurvey, $thisstep;

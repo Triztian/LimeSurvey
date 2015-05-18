@@ -635,6 +635,7 @@ class database extends Survey_Common_Action
             //now save all valid attributes
             $validAttributes=$qattributes[Yii::app()->request->getPost('type')];
 
+            Yii::app()->cache->delete("question_attr_$iQuestionID");
             foreach ($validAttributes as $validAttribute)
             {
                 if ($validAttribute['i18n'])
@@ -653,9 +654,7 @@ class database extends Survey_Common_Action
                             {
                                 QuestionAttribute::model()->deleteAll('attribute=:attribute AND qid=:qid AND language=:language', array(':attribute'=>$validAttribute['name'], ':qid'=>$iQuestionID, ':language'=>$sLanguage));
                             }
-                        }
-                        elseif($value!='')
-                        {
+                        } elseif ($value!='') {
                             $attribute = new QuestionAttribute;
                             $attribute->qid = $iQuestionID;
                             $attribute->value = $value;
@@ -664,9 +663,7 @@ class database extends Survey_Common_Action
                             $attribute->save();
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $value=Yii::app()->request->getPost($validAttribute['name']);
 
                     if ($validAttribute['name']=='multiflexible_step' && trim($value)!='') {

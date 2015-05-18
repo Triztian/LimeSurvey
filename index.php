@@ -1,6 +1,4 @@
 <?php
-include 'application/helpers/HtmlTag.php';
-
 /*
  *---------------------------------------------------------------
  * SYSTEM FOLDER NAME
