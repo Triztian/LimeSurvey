@@ -104,7 +104,6 @@ class QuestionAttribute extends LSActiveRecord
     * @return array
     */
     public function getQuestionAttributes($iQuestionID) {
-        xdebug_break();
         $iQuestionID=(int)$iQuestionID;
 
         $cacheKey = "question_attr_$iQuestionID";

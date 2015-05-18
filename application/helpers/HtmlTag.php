@@ -28,6 +28,10 @@ class HtmlTag {
             $this->children = $children;
     }
 
+    public function add($node) {
+        $this->children[] = $node;
+    }
+
     /**
      * Add an HTML element attribute. E.g. "name="value""
      */

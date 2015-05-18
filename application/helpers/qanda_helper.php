@@ -209,6 +209,7 @@ function retrieveAnswers($ia) {
             $values=do_multipleshorttext($ia);
             break;
         case 'K': //MULTIPLE NUMERICAL QUESTION
+            xdebug_break();
             $values=do_multiplenumeric($ia);
             break;
         case 'N': //NUMERICAL QUESTION TYPE
@@ -3072,6 +3073,7 @@ function do_multiplenumeric($ia)
 {
     global $thissurvey;
 
+    xdebug_break();
     $clang = Yii::app()->lang;
     $extraclass ="";
     $checkconditionFunction = "fixnum_checkconditions";
@@ -3111,14 +3113,11 @@ function do_multiplenumeric($ia)
         $suffix = '';
     }
 
-    if ($thissurvey['nokeyboard']=='Y')
-    {
+    if ($thissurvey['nokeyboard']=='Y') {
         includeKeypad();
         $kpclass = "num-keypad";
         $extraclass .=" keypad";
-    }
-    else
-    {
+    } else {
         $kpclass = "";
     }
 
@@ -3128,62 +3127,48 @@ function do_multiplenumeric($ia)
     {
         $tiwidth=$aQuestionAttributes['text_input_width'];
         $extraclass .=" inputwidth".trim($aQuestionAttributes['text_input_width']);
-    }
-    else
-    {
+    } else {
         $tiwidth=10;
     }
+
     $prefixclass="numeric";
-    if ($aQuestionAttributes['slider_layout']==1)
-    {
+    if ($aQuestionAttributes['slider_layout']) {
         $prefixclass="slider";
         $slider_layout=true;
         $extraclass .=" withslider";
-        if (trim($aQuestionAttributes['slider_accuracy'])!='')
-        {
+        if (trim($aQuestionAttributes['slider_accuracy'])!='') {
             $slider_step = $aQuestionAttributes['slider_accuracy'];
-        }
-        else
-        {
+        } else {
             $slider_step = 1;
         }
 
-        if (trim($aQuestionAttributes['slider_min'])!='')
-        {
+        if (trim($aQuestionAttributes['slider_min'])!='') {
             $slider_mintext = $aQuestionAttributes['slider_min'];
             $slider_min = $aQuestionAttributes['slider_min'];
-        }
-        else
-        {
+        } else {
             $slider_mintext = 0;
             $slider_min = 0;
         }
-        if (trim($aQuestionAttributes['slider_max'])!='')
-        {
+
+        if (trim($aQuestionAttributes['slider_max'])!='') {
             $slider_maxtext = $aQuestionAttributes['slider_max'];
             $slider_max = $aQuestionAttributes['slider_max'];
-        }
-        else
-        {
+        } else {
             $slider_maxtext = "100";
             $slider_max = 100;
         }
+
         $slider_default= (trim($aQuestionAttributes['slider_default'])!='')?$aQuestionAttributes['slider_default']:"";
 
-        if ($slider_default == '' && $aQuestionAttributes['slider_middlestart']==1)
-        {
+        if ($slider_default == '' && $aQuestionAttributes['slider_middlestart']==1) {
             $slider_middlestart = intval(($slider_max + $slider_min)/2);
-        }
-        else
-        {
+        } else {
             $slider_middlestart = '';
         }
 
         $slider_separator= (trim($aQuestionAttributes['slider_separator'])!='')?$aQuestionAttributes['slider_separator']:"";
         $slider_reset=($aQuestionAttributes['slider_reset'])?1:0;
-    }
-    else
-    {
+    } else {
         $slider_layout = false;
     }
     $hidetip=$aQuestionAttributes['hide_tip'];
@@ -3191,9 +3176,7 @@ function do_multiplenumeric($ia)
     if ($aQuestionAttributes['random_order']==1)
     {
         $ansquery = "SELECT * FROM {{questions}} WHERE parent_qid=$ia[0]  AND language='".$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']."' ORDER BY ".dbRandom();
-    }
-    else
-    {
+    } else {
         $ansquery = "SELECT * FROM {{questions}} WHERE parent_qid=$ia[0]  AND language='".$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']."' ORDER BY question_order";
     }
 
@@ -3204,25 +3187,19 @@ function do_multiplenumeric($ia)
 
     $answer_main = '';
 
-    if ($anscount==0)
-    {
+    if ($anscount==0) {
         $inputnames=array();
         $answer_main .= '    <li>'.$clang->gT('Error: This question has no answers.')."</li>\n";
-    }
-    else
-    {
-        foreach($aSubquestions as $ansrow)
-        {
+
+    } else {
+        foreach($aSubquestions as $ansrow) {
             $myfname = $ia[1].$ansrow['title'];
             if ($ansrow['question'] == "") {$ansrow['question'] = "&nbsp;";}
-            if ($slider_layout === false || $slider_separator == '')
-            {
+            if ($slider_layout === false || $slider_separator == '') {
                 $theanswer = $ansrow['question'];
                 $sliderleft='';
                 $sliderright='';
-            }
-            else
-            {
+            } else {
                 $aAnswer=explode($slider_separator,$ansrow['question']);
                 $theanswer=(isset($aAnswer[0]))?$aAnswer[0]:"";
                 $sliderleft=(isset($aAnswer[1]))?$aAnswer[1]:"";
@@ -3283,8 +3260,7 @@ function do_multiplenumeric($ia)
         $answer .= "<ul class=\"subquestions-list questions-list text-list {$prefixclass}-list\">\n".$answer_main."</ul>\n";
     }
 
-    if($aQuestionAttributes['slider_layout']==1)
-    {
+    if($aQuestionAttributes['slider_layout']==1) {
         Yii::app()->getClientScript()->registerScriptFile(Yii::app()->getConfig('generalscripts')."numeric-slider.js");
         Yii::app()->getClientScript()->registerCssFile(Yii::app()->getConfig('publicstyleurl') . "numeric-slider.css");
         if ($slider_default != "")
@@ -3332,10 +3308,6 @@ function do_multiplenumeric($ia)
 
     return array($answer, $inputnames);
 }
-
-
-
-
 
 // ---------------------------------------------------------------
 function do_numerical($ia) {
@@ -3398,8 +3370,7 @@ function do_numerical($ia) {
 
     $fValue = str_replace('.',$sSeparator,$fValue);
 
-    if ($thissurvey['nokeyboard']=='Y')
-    {
+    if ($thissurvey['nokeyboard']=='Y') {
         includeKeypad();
         $extraclass .=" inputkeypad";
         $answertypeclass .= " num-keypad";
@@ -3407,7 +3378,7 @@ function do_numerical($ia) {
         $kpclass = "";
     }
 
-    $asSlider = (bool)$aQuestionAttributes['numeric_as_slider'];
+    $asSlider = (bool)$aQuestionAttributes['slider_layout'];
     if ($asSlider) {
         $aQuestionAttributes['min_num_value_n'] = 0.0;
         $aQuestionAttributes['max_num_value_n'] = 1.0;
@@ -3427,7 +3398,7 @@ function do_numerical($ia) {
         'type'      => $asSlider ? 'range' : 'text',
         'min'       => $aQuestionAttributes['min_num_value_n'],
         'max'       => $aQuestionAttributes['max_num_value_n'],
-        'step'      => 0.01,
+        'step'      => $aQuestionAttributes['slider_accuracy'],
         'size'      => $tiwidth,
         'name'      => $ia[1],
         'title'     => $clang->gT('Only numbers may be entered in this field.'),
@@ -3435,11 +3406,24 @@ function do_numerical($ia) {
         'onkeyup'   => "{$checkconditionFunction}(this.value, this.name, this.type,'onchange',{$integeronly})"
     ), true);
 
+    $div = new HtmlTag('div', array(), false, array());
+    if ( $aQuestionAttributes['slider_showminmax'] ) {
+        $minLabel = $aQuestionAttributes['slider_min_label'] ? $aQuestionAttributes['slider_min_label'] : $aQuestionAttributes['min_num_value_n'];
+
+        $maxLabel = $aQuestionAttributes['slider_max_label'] ? $aQuestionAttributes['slider_max_label'] : $aQuestionAttributes['max_num_value_n'];
+
+        $div->add(new HtmlTag('label', array(), false, array($minLabel)));
+        $div->add($inputHtml);
+        $div->add(new HtmlTag('label', array(), false, array($maxLabel)));
+    } else {
+        $div->add($inputHtml);
+    }
+
     $ansHtml = new HtmlTag('p', array(
         'class' => "question answer-item text-item numeric-item {$extraclass}"
     ), false, array(
         $labelHtml,
-        $inputHtml
+        $div
     ));
 
     $inputnames[] = $ia[1];

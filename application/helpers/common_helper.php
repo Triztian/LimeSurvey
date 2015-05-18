@@ -18,27 +18,22 @@ Yii::import('application.libraries.Limesurvey_lang');
  * @param string $string
  * @param string $escapemode
  */
-function gT($string, $escapemode = 'html')
-{
-    if (isset(App()->lang))
-    {
+function gT($string, $escapemode = 'html') {
+    if (isset(App()->lang)) {
         return App()->lang->gT($string, $escapemode);
-    }
-    else
-    {
+    } else {
         return $string;
     }
 }
 
-function eT($string, $escapemode = 'html')
-{
+function eT($string, $escapemode = 'html') {
     echo gT($string, $escapemode);
 }
 
-function ngT($single, $plural, $number, $escapemode = 'html')
-{
+function ngT($single, $plural, $number, $escapemode = 'html') {
     return App()->lang->ngT($single, $plural, $number, $escapemode);
 }
+
 /**
 * getQuestionTypeList() Returns list of question types available in LimeSurvey. Edit this if you are adding a new
 *    question type
@@ -3027,23 +3022,6 @@ function questionAttributes($returnByName=false) {
             "caption"=>$clang->gT('Minimum value')
         );
 
-        $qattributes["min_num_value_n_label"]=array(
-            "types"     =>"NK",
-            'category'  =>$clang->gT('Display'),
-            'sortorder' =>101,
-            'inputtype' =>'text',
-            "help"      =>$clang->gT('Label tha represents the minimum value.'),
-            "caption"   =>$clang->gT('Minimum label')
-        );
-
-        $qattributes["max_num_value_n_label"]=array(
-            "types"     =>"NK",
-            'category'  =>$clang->gT('Display'),
-            'sortorder' =>101,
-            'inputtype' =>'text',
-            "help"      =>$clang->gT('Label tha represents the maximum value.'),
-            "caption"   =>$clang->gT('Maximum label')
-        );
 
         $qattributes["multiflexible_max"]=array(
         "types"=>":",
@@ -3116,22 +3094,6 @@ function questionAttributes($returnByName=false) {
         "help"=>$clang->gT('Allow only numerical input'),
         "caption"=>$clang->gT('Numbers only')
         );
-
-        $qattributes['numeric_as_slider'] = array(
-            'types'     => 'N',
-            'category'  => $clang->gT('Display'),
-            'default'   => false,
-            'inputtype' => 'singleselect',
-            'options'   => array(
-                0 => $clang->gT('No'),
-                1 => $clang->gT('Yes')
-            ),
-            'caption'   => $clang->gT('Display as slider'),
-            'help'      => $clang->gT('Display the numeric as a HTML5 range slider.'),
-            'sortorder' => 151
-        );
-
-        $qattributes[''] = array();
 
         $qattributes['show_totals'] =    array(
         'types' =>    ';',
@@ -3312,96 +3274,130 @@ function questionAttributes($returnByName=false) {
         "help"=>$clang->gT('Enter question ID to get subquestion order from a previous question'));
 
         $qattributes["slider_layout"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>1,
-        'inputtype'=>'singleselect',
-        'options'=>array(0=>$clang->gT('No'),
-        1=>$clang->gT('Yes')),
-        'default'=>0,
-        "help"=>$clang->gT('Use slider layout'),
-        "caption"=>$clang->gT('Use slider layout'));
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Slider'),
+            'sortorder' =>1,
+            'inputtype' =>'singleselect',
+            'options'   =>array(
+                0=>$clang->gT('No'),
+                1=>$clang->gT('Yes')
+            ),
+            'default'   =>0,
+            "help"      =>$clang->gT('Use slider layout'),
+            "caption"   =>$clang->gT('Use slider layout')
+        );
 
         $qattributes["slider_min"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>10,
-        'inputtype'=>'text',
-        "help"=>$clang->gT('Slider minimum value'),
-        "caption"=>$clang->gT('Slider minimum value'));
+            "types"=>"K",
+            'category'=>$clang->gT('Slider'),
+            'sortorder'=>10,
+            'inputtype'=>'text',
+            "help"=>$clang->gT('Slider minimum value'),
+            "caption"=>$clang->gT('Slider minimum value')
+        );
 
         $qattributes["slider_max"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>11,
-        'inputtype'=>'text',
-        "help"=>$clang->gT('Slider maximum value'),
-        "caption"=>$clang->gT('Slider maximum value'));
+            "types"=>"K",
+            'category'=>$clang->gT('Slider'),
+            'sortorder'=>11,
+            'inputtype'=>'text',
+            "help"=>$clang->gT('Slider maximum value'),
+            "caption"=>$clang->gT('Slider maximum value')
+        );
 
         $qattributes["slider_accuracy"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>30,
-        'inputtype'=>'text',
-        "help"=>$clang->gT('Slider accuracy'),
-        "caption"=>$clang->gT('Slider accuracy'));
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Slider'),
+            'sortorder' =>30,
+            'inputtype' =>'text',
+            "help"      =>$clang->gT('Slider accuracy'),
+            "caption"   =>$clang->gT('Slider accuracy'),
+            'default'   => 0.01
+        );
 
         $qattributes["slider_default"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>50,
-        'inputtype'=>'text',
-        "help"=>$clang->gT('Slider start as this value (this will set the initial value).'),
-        "caption"=>$clang->gT('Slider initial value'));
+            "types"=>"NK",
+            'category'=>$clang->gT('Slider'),
+            'sortorder'=>50,
+            'inputtype'=>'text',
+            "help"=>$clang->gT('Slider start as this value (this will set the initial value).'),
+            "caption"=>$clang->gT('Slider initial value')
+        );
 
         $qattributes["slider_middlestart"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>40,
-        'inputtype'=>'singleselect',
-        'options'=>array(0=>$clang->gT('No'),
-        1=>$clang->gT('Yes')),
-        'default'=>0,
-        "help"=>$clang->gT('The handle is displayed at the middle of the slider except if Slider initial value is set (this will not set the initial value).'),
-        "caption"=>$clang->gT('Slider starts at the middle position'));
+            "types"     => "NK",
+            'category'  => $clang->gT('Slider'),
+            'sortorder' => 40,
+            'inputtype' =>'singleselect',
+            'options'   => array(
+                0 => $clang->gT('No'),
+                1 => $clang->gT('Yes')
+            ),
+            'default'=>0,
+            "help"=>$clang->gT('The handle is displayed at the middle of the slider except if Slider initial value is set (this will not set the initial value).'),
+            "caption"=>$clang->gT('Slider starts at the middle position')
+        );
 
         $qattributes["slider_rating"]=array(
-        "types"=>"5",
-        'category'=>$clang->gT('Display'),
-        'sortorder'=>90,
-        'inputtype'=>'singleselect',
-        'options'=>array(
-        0=>$clang->gT('No'),
-        1=>$clang->gT('Yes - stars'),
-        2=>$clang->gT('Yes - slider with emoticon'),
-        ),
-        'default'=>0,
-        "help"=>$clang->gT('Use slider layout'),
-        "caption"=>$clang->gT('Use slider layout'));
+            "types"     => "5",
+            'category'  => $clang->gT('Display'),
+            'sortorder' => 90,
+            'inputtype' =>'singleselect',
+            'options'   => array(
+                0 =>$clang->gT('No'),
+                1 =>$clang->gT('Yes - stars'),
+                2 =>$clang->gT('Yes - slider with emoticon'),
+            ),
+            'default'   => 0,
+            "help"      => $clang->gT('Use slider layout'),
+            "caption"   => $clang->gT('Use slider layout')
+        );
 
         $qattributes["slider_reset"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>50,
-        'inputtype'=>'singleselect',
-        'options'=>array(
-        0=>$clang->gT('No'),
-        1=>$clang->gT('Yes'),
-        ),
-        'default'=>0,
-        "help"=>$clang->gT('Add a button to reset the slider. If you choose an start value, it reset at start value, else empty the answer.'),
-        "caption"=>$clang->gT('Allow reset the slider'));
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Slider'),
+            'sortorder' =>50,
+            'inputtype' =>'singleselect',
+            'options'   =>array(
+                0 =>$clang->gT('No'),
+                1 =>$clang->gT('Yes'),
+            ),
+            'default'   =>0,
+            "help"      =>$clang->gT('Add a button to reset the slider. If you choose an start value, it reset at start value, else empty the answer.'),
+            "caption"   =>$clang->gT('Allow reset the slider')
+        );
 
         $qattributes["slider_showminmax"]=array(
-        "types"=>"K",
-        'category'=>$clang->gT('Slider'),
-        'sortorder'=>100,
-        'inputtype'=>'singleselect',
-        'options'=>array(0=>$clang->gT('No'),
-        1=>$clang->gT('Yes')),
-        'default'=>0,
-        "help"=>$clang->gT('Display min and max value under the slider'),
-        "caption"=>$clang->gT('Display slider min and max value'));
+            "types"     => "NK",
+            'category'  => $clang->gT('Slider'),
+            'sortorder' => 100,
+            'inputtype' =>'singleselect',
+            'options'   => array(
+                0 =>$clang->gT('No'),
+                1 =>$clang->gT('Yes')
+            ),
+            'default'   => 0,
+            "help"      => $clang->gT('Display min and max value under the slider'),
+            "caption"   => $clang->gT('Display slider min and max value')
+        );
+
+        $qattributes["slider_min_label"]=array(
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Slider'),
+            'sortorder' =>101,
+            'inputtype' =>'text',
+            "help"      =>$clang->gT('Label that represents the minimum value.'),
+            "caption"   =>$clang->gT('Minimum label')
+        );
+
+        $qattributes["slider_max_label"]=array(
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Slider'),
+            'sortorder' =>101,
+            'inputtype' =>'text',
+            "help"      =>$clang->gT('Label that represents the maximum value.'),
+            "caption"   =>$clang->gT('Maximum label')
+        );
 
         $qattributes["slider_separator"]=array(
         "types"=>"K",

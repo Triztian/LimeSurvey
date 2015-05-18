@@ -1,4 +1,8 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
+use application\helper\HtmlTag;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+Yii::import("application.libraries.Save");
 /*
 * LimeSurvey
 * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -11,21 +15,14 @@
 * See COPYRIGHT.php for copyright notices and details.
 *
 */
-
 class SurveyRuntimeHelper {
 
-
-	protected function createFullQuestionIndex($LEMsessid, $surveyMode)
-	{
-		if ($surveyMode == 'group')
-		{
+	protected function createFullQuestionIndex($LEMsessid, $surveyMode) {
+		if ($surveyMode == 'group') {
 			$this->createFullQuestionIndexByGroup($LEMsessid);
-		}
-		else
-		{
+		} else {
 			$this->createFullQuestionIndexByQuestion($LEMsessid);
 		}
-		
 	}
 
 	protected function createFullQuestionIndexByGroup($LEMsessid)
@@ -37,11 +34,6 @@ class SurveyRuntimeHelper {
 				echo CHtml::openTag('ol');
 					foreach ($_SESSION[$LEMsessid]['grouplist'] as $key => $group)
 					{
-//						echo '<script>';
-//						echo 'var session = '. json_encode(LimeExpressionManager::singleton()->_ValidateGroup($key)) . ';';
-//						echo 'console.log(session);';
-//						echo '</script>';
-// Better to use tracevar / 
 						if (LimeExpressionManager::GroupIsRelevant($group['gid']))
 						{
 							$group['step'] = $key + 1;
@@ -177,25 +169,25 @@ class SurveyRuntimeHelper {
         if (!$thissurvey) {
             $thissurvey = getSurveyInfo($surveyid);
         }
+
         $LEMsessid = 'survey_' . $surveyid;
-        if (isset($_SESSION[$LEMsessid]['s_lang']))
-        {
+        if (isset($_SESSION[$LEMsessid]['s_lang'])) {
             $this->setJavascriptVar($surveyid, $_SESSION[$LEMsessid]['s_lang']);
-        }
-        else
-        {
+        } else {
             $this->setJavascriptVar($surveyid, $thissurvey['language']);
         }
+
         $sTemplatePath=getTemplatePath(Yii::app()->getConfig("defaulttemplate")).DIRECTORY_SEPARATOR;
-        if (isset ($_SESSION['survey_'.$surveyid]['templatepath']))
-        {
+        if (isset ($_SESSION['survey_'.$surveyid]['templatepath'])) {
             $sTemplatePath=$_SESSION['survey_'.$surveyid]['templatepath'];
         }
-       // $LEMdebugLevel - customizable debugging for Lime Expression Manager
-        $LEMdebugLevel = 0;   // LEM_DEBUG_TIMING;    // (LEM_DEBUG_TIMING + LEM_DEBUG_VALIDATION_SUMMARY + LEM_DEBUG_VALIDATION_DETAIL);
+        
+        // $LEMdebugLevel - customizable debugging for Lime Expression Manager
+        $LEMdebugLevel = 0;   
+        // LEM_DEBUG_TIMING;    
+        // (LEM_DEBUG_TIMING + LEM_DEBUG_VALIDATION_SUMMARY + LEM_DEBUG_VALIDATION_DETAIL);
         $LEMskipReprocessing=false; // true if used GetLastMoveResult to avoid generation of unneeded extra JavaScript
-        switch ($thissurvey['format'])
-        {
+        switch ($thissurvey['format']) {
             case "A": //All in one
                 $surveyMode = 'survey';
                 break;
@@ -236,22 +228,20 @@ class SurveyRuntimeHelper {
         {
             $previewgrp = true;
         }
+
         $previewquestion = false;
-        if ($surveyMode == 'question' && isset($param['action']) && ($param['action'] == 'previewquestion'))
-        {
+        if ($surveyMode == 'question' && isset($param['action']) && 
+            ($param['action'] == 'previewquestion')) { 
             $previewquestion = true;
         }
         //        if (isset($param['newtest']) && $param['newtest'] == "Y")
         //            setcookie("limesurvey_timers", "0");   //@todo fix - sometimes results in headers already sent error
         $show_empty_group = false;
 
-        if ($previewgrp || $previewquestion)
-        {
+        if ($previewgrp || $previewquestion) {
             $_SESSION[$LEMsessid]['prevstep'] = 2;
             $_SESSION[$LEMsessid]['maxstep'] = 0;
-        }
-        else
-        {
+        } else {
             //RUN THIS IF THIS IS THE FIRST TIME , OR THE FIRST PAGE ########################################
             if (!isset($_SESSION[$LEMsessid]['step'])) // || !$_SESSION[$LEMsessid]['step']) - don't do this for step0, else rebuild the session
             {
@@ -272,9 +262,7 @@ class SurveyRuntimeHelper {
                     $move = "movenext";
                     $_SESSION[$LEMsessid]['step']=1;
                 }
-            }
-            elseif($surveyid != LimeExpressionManager::getLEMsurveyId())
-            {
+            } elseif($surveyid != LimeExpressionManager::getLEMsurveyId()) {
                 LimeExpressionManager::StartSurvey($surveyid, $surveyMode, $surveyOptions, false, $LEMdebugLevel);
                 LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['step'], false, false);
             }
@@ -319,6 +307,7 @@ class SurveyRuntimeHelper {
             {
                 $_SESSION[$LEMsessid]['prevstep'] = $_SESSION[$LEMsessid]['step'];
             }
+
             if (!isset($_SESSION[$LEMsessid]['prevstep']))
             {
                 $_SESSION[$LEMsessid]['prevstep']=-1;   // this only happens on re-load
@@ -441,20 +430,17 @@ class SurveyRuntimeHelper {
             }
             // TODO FIXME
             if ($thissurvey['active'] == "Y") {
-                Yii::import("application.libraries.Save");
                 $cSave = new Save();
             }
-           if ($thissurvey['active'] == "Y" && Yii::app()->request->getPost('saveall')) // Don't test if save is allowed
-            {
+
+            // Don't test if save is allowed
+            if ($thissurvey['active'] == "Y" && Yii::app()->request->getPost('saveall')) {
                 $bTokenAnswerPersitance = $thissurvey['tokenanswerspersistence'] == 'Y' && isset($surveyid) && tableExists('tokens_'.$surveyid);
                 // must do this here to process the POSTed values
                 $moveResult = LimeExpressionManager::JumpTo($_SESSION[$LEMsessid]['step'], false);   // by jumping to current step, saves data so far
-                if (!isset($_SESSION[$LEMsessid]['scid']) && !$bTokenAnswerPersitance )
-                {
+                if (!isset($_SESSION[$LEMsessid]['scid']) && !$bTokenAnswerPersitance ) {
                     $cSave->showsaveform(); // generates a form and exits, awaiting input
-                }
-                else
-                {
+                } else {
                     // Intentional retest of all conditions to be true, to make sure we do have tokens and surveyid
                     // Now update lastpage to $_SESSION[$LEMsessid]['step'] in SurveyDynamic, otherwise we land on 
                     // the previous page when we return.
@@ -492,9 +478,7 @@ class SurveyRuntimeHelper {
                 if (strlen($unansweredSQList) > 0 && $backok != "N")
                 {
                     $notanswered = explode('|', $unansweredSQList);
-                }
-                else
-                {
+                } else {
                     $notanswered = array();
                 }
 
@@ -503,9 +487,7 @@ class SurveyRuntimeHelper {
                 if (strlen($invalidSQList) > 0 && $backok != "N")
                 {
                     $notvalidated = explode('|', $invalidSQList);
-                }
-                else
-                {
+                } else {
                     $notvalidated = array();
                 }
             }
@@ -558,14 +540,6 @@ class SurveyRuntimeHelper {
                         echo templatereplace(file_get_contents($sTemplatePath."assessment.pstpl"), array(), $redata, 'SubmitAssessmentI', false, NULL, array(), true );
                     }
 
-                    // fetch all filenames from $_SESSIONS['files'] and delete them all
-                    // from the /upload/tmp/ directory
-                    /* echo "<pre>";print_r($_SESSION);echo "</pre>";
-                    for($i = 1; isset($_SESSION[$LEMsessid]['files'][$i]); $i++)
-                    {
-                    unlink('upload/tmp/'.$_SESSION[$LEMsessid]['files'][$i]['filename']);
-                    }
-                    */
                     // can't kill session before end message, otherwise INSERTANS doesn't work.
                     $completed = templatereplace($thissurvey['surveyls_endtext'], array(), $redata, 'SubmitEndtextI', false, NULL, array(), true );
                     $completed .= "<br /><strong><font size='2' color='red'>" . $clang->gT("Did Not Save") . "</font></strong><br /><br />\n\n";
@@ -614,7 +588,6 @@ class SurveyRuntimeHelper {
                     $content = '';
 
                     $content .= templatereplace(file_get_contents($sTemplatePath."startpage.pstpl"), array(), $redata, 'SubmitStartpage', false, NULL, array(), true );
-
                     //echo $thissurvey['url'];
                     //Check for assessments
                     if ($thissurvey['assessments'] == "Y")
@@ -681,16 +654,14 @@ class SurveyRuntimeHelper {
                 
                 // @todo Remove direct session access.
                 $event = new PluginEvent('afterSurveyComplete');
-                if (isset($_SESSION[$LEMsessid]['srid']))
-                {
+                if (isset($_SESSION[$LEMsessid]['srid'])) {
                     $event->set('responseId', $_SESSION[$LEMsessid]['srid']);
                 }
                 $event->set('surveyId', $surveyid);
                 App()->getPluginManager()->dispatchEvent($event);
                 $blocks = array();
 
-                foreach ($event->getAllContent() as $blockData)
-                {
+                foreach ($event->getAllContent() as $blockData) {
                     /* @var $blockData PluginEventContent */
                     $blocks[] = CHtml::tag('div', array('id' => $blockData->getCssId(), 'class' => $blockData->getCssClass()), $blockData->getContent());
                 }
@@ -700,10 +671,10 @@ class SurveyRuntimeHelper {
                 
                 echo templatereplace(file_get_contents($sTemplatePath."completed.pstpl"), array('completed' => $completed), $redata, 'SubmitCompleted', false, NULL, array(), true );
                 echo "\n";
-                if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING))
-                {
+                if ((($LEMdebugLevel & LEM_DEBUG_TIMING) == LEM_DEBUG_TIMING)) {
                     echo LimeExpressionManager::GetDebugTimingMessage();
                 }
+
                 if ((($LEMdebugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY))
                 {
                     echo "<table><tr><td align='left'><b>Group/Question Validation Results:</b>" . $moveResult['message'] . "</td></tr></table>\n";
@@ -712,8 +683,7 @@ class SurveyRuntimeHelper {
                 doFooter();
                 
                 // The session cannot be killed until the page is completely rendered
-                if ($thissurvey['printanswers'] != 'Y')
-                {
+                if ($thissurvey['printanswers'] != 'Y') {
                     killSurveySession($surveyid);
                 }                
                 exit;
@@ -737,8 +707,7 @@ class SurveyRuntimeHelper {
         createFieldMap($surveyid,'full',false,false,$_SESSION[$LEMsessid]['s_lang']);
         //GET GROUP DETAILS
 
-        if ($surveyMode == 'group' && $previewgrp)
-        {
+        if ($surveyMode == 'group' && $previewgrp) {
             //            setcookie("limesurvey_timers", "0"); //@todo fix - sometimes results in headers already sent error
             $_gid = sanitize_int($param['gid']);
 
@@ -764,34 +733,33 @@ class SurveyRuntimeHelper {
             $gid = $stepInfo['gid'];
             $groupname = $stepInfo['gname'];
             $groupdescription = $stepInfo['gtext'];
-        }
-        else
-        {
-            if (($show_empty_group) || !isset($_SESSION[$LEMsessid]['grouplist']))
-            {
-                $gid = -1; // Make sure the gid is unused. This will assure that the foreach (fieldarray as ia) has no effect.
+        } else {
+            if (($show_empty_group) || !isset($_SESSION[$LEMsessid]['grouplist'])) {
+                // Make sure the gid is unused. This will assure that the 
+                // foreach (fieldarray as ia) has no effect.
+                $gid = -1; 
                 $groupname = $clang->gT("Submit your answers");
                 $groupdescription = $clang->gT("There are no more questions. Please press the <Submit> button to finish this survey.");
-            }
-            else if ($surveyMode != 'survey')
-                {
-                    if ($previewquestion) {
-                        $_qid = sanitize_int($param['qid']);
-                        LimeExpressionManager::StartSurvey($surveyid, 'question', $surveyOptions, false, $LEMdebugLevel);
-                        $qSec       = LimeExpressionManager::GetQuestionSeq($_qid);
-                        $moveResult = LimeExpressionManager::JumpTo($qSec+1,true,false,true);
-                        $stepInfo   = LimeExpressionManager::GetStepIndexInfo($moveResult['seq']);
-                    } else {
-                        $stepInfo = LimeExpressionManager::GetStepIndexInfo($moveResult['seq']);
-                    }
 
-                    $gid = $stepInfo['gid'];
-                    $groupname = $stepInfo['gname'];
-                    $groupdescription = $stepInfo['gtext'];
+            } else if ($surveyMode != 'survey') {
+                xdebug_break();
+                if ($previewquestion) {
+                    $_qid = sanitize_int($param['qid']);
+                    LimeExpressionManager::StartSurvey($surveyid, 'question', $surveyOptions, false, $LEMdebugLevel);
+                    $qSec       = LimeExpressionManager::GetQuestionSeq($_qid);
+                    $moveResult = LimeExpressionManager::JumpTo($qSec+1,true,false,true);
+                    $stepInfo   = LimeExpressionManager::GetStepIndexInfo($moveResult['seq']);
+                } else {
+                    $stepInfo = LimeExpressionManager::GetStepIndexInfo($moveResult['seq']);
                 }
+
+                $gid = $stepInfo['gid'];
+                $groupname = $stepInfo['gname'];
+                $groupdescription = $stepInfo['gtext'];
+            }
         }
-        if ($previewquestion)
-        {
+
+        if ($previewquestion) {
             $_SESSION[$LEMsessid]['step'] = 0; //maybe unset it after the question has been displayed?
         }
 
@@ -800,23 +768,12 @@ class SurveyRuntimeHelper {
             $_SESSION[$LEMsessid]['maxstep'] = $_SESSION[$LEMsessid]['step'];
         }
 
-        // If the survey uses answer persistence and a srid is registered in SESSION
-        // then loadanswers from this srid
-        /* Only survey mode used this - should all?
-        if ($thissurvey['tokenanswerspersistence'] == 'Y' &&
-        $thissurvey['anonymized'] == "N" &&
-        isset($_SESSION[$LEMsessid]['srid']) &&
-        $thissurvey['active'] == "Y")
-        {
-        loadanswers();
-        }
-        */
-
         //******************************************************************************************************
         //PRESENT SURVEY
         //******************************************************************************************************
 
         $okToShowErrors = (!$previewgrp && (isset($invalidLastPage) || $_SESSION[$LEMsessid]['prevstep'] == $_SESSION[$LEMsessid]['step']));
+
 
         xdebug_break();
         Yii::app()->getController()->loadHelper('qanda');
@@ -1149,8 +1106,7 @@ class SurveyRuntimeHelper {
         echo LimeExpressionManager::GetRelevanceAndTailoringJavaScript();
         LimeExpressionManager::FinishProcessingPage();
 
-        if (!$previewgrp && !$previewquestion)
-        {
+        if (!$previewgrp && !$previewquestion) {
             $navigator = surveymover(); //This gets globalised in the templatereplace function
             $redata = compact(array_keys(get_defined_vars()));
 
