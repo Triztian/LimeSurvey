@@ -624,7 +624,6 @@ class YiiBase
 	 */
 	public static function registerAutoloader($callback, $append=false)
 	{
-        xdebug_break();
 		if($append)
 		{
 			self::$enableIncludePath=false;

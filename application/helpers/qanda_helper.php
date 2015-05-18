@@ -77,7 +77,6 @@ function retrieveAnswers($ia) {
     //globalise required config variables
     global $thissurvey; //These are set by index.php
 
-    xdebug_break();
     $clang = Yii::app()->lang;
 
     //DISPLAY
@@ -209,7 +208,6 @@ function retrieveAnswers($ia) {
             $values=do_multipleshorttext($ia);
             break;
         case 'K': //MULTIPLE NUMERICAL QUESTION
-            xdebug_break();
             $values=do_multiplenumeric($ia);
             break;
         case 'N': //NUMERICAL QUESTION TYPE
@@ -3073,7 +3071,6 @@ function do_multiplenumeric($ia)
 {
     global $thissurvey;
 
-    xdebug_break();
     $clang = Yii::app()->lang;
     $extraclass ="";
     $checkconditionFunction = "fixnum_checkconditions";
@@ -3384,7 +3381,6 @@ function do_numerical($ia) {
         $aQuestionAttributes['max_num_value_n'] = 1.0;
     }
 
-    xdebug_break();
     $labelHtml = new HtmlTag('label', array(
         'for'   => "answer{$ia[1]}",
         'class' => "hide label"

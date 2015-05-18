@@ -79,7 +79,6 @@ class QuestionAttribute extends LSActiveRecord
     
     public function setQuestionAttribute($iQuestionID, $sAttributeName, $sValue)
     {
-        xdebug_break();
         Yii::app()->cache->delete("question_attr_$iQuestionID");
         $oModel = new self;
         $oModel->updateAll(

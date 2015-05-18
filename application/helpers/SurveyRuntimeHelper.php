@@ -162,7 +162,6 @@ class SurveyRuntimeHelper {
     * @param mixed $args
     */
     function run($surveyid, $args) {
-        xdebug_break();
         global $errormsg;
         extract($args);
 
@@ -404,7 +403,6 @@ class SurveyRuntimeHelper {
             if ($surveyMode != 'survey' && $_SESSION[$LEMsessid]['step'] == 0)
             {
                 $_SESSION[$LEMsessid]['test']=time();
-                xdebug_break();
                 display_first_page();
                 Yii::app()->end(); // So we can still see debug messages
             }
@@ -742,7 +740,6 @@ class SurveyRuntimeHelper {
                 $groupdescription = $clang->gT("There are no more questions. Please press the <Submit> button to finish this survey.");
 
             } else if ($surveyMode != 'survey') {
-                xdebug_break();
                 if ($previewquestion) {
                     $_qid = sanitize_int($param['qid']);
                     LimeExpressionManager::StartSurvey($surveyid, 'question', $surveyOptions, false, $LEMdebugLevel);
@@ -775,7 +772,6 @@ class SurveyRuntimeHelper {
         $okToShowErrors = (!$previewgrp && (isset($invalidLastPage) || $_SESSION[$LEMsessid]['prevstep'] == $_SESSION[$LEMsessid]['step']));
 
 
-        xdebug_break();
         Yii::app()->getController()->loadHelper('qanda');
         setNoAnswerMode($thissurvey);
 
@@ -809,7 +805,6 @@ class SurveyRuntimeHelper {
                         continue;
                     }
 
-                    xdebug_break();
                     $qidattributes = getQuestionAttributeValues($ia[0], $ia[4]);
                     if ($ia[4] != '*' && ($qidattributes === false || $qidattributes['hidden'] == 1))
                     {
@@ -820,7 +815,6 @@ class SurveyRuntimeHelper {
                     // TMSW - can content of retrieveAnswers() be provided by LEM?  Review scope of what it provides.
                     // TODO - retrieveAnswers is slow - queries database separately for each question. May be fixed in _CI or _YII ports, so ignore for now
                     list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
-                    xdebug_break();
                     if ($plus_qanda) {
                         $plus_qanda[] = $ia[4];
                         $plus_qanda[] = $ia[6]; // adds madatory identifyer for adding mandatory class to question wrapping div
