@@ -110,8 +110,7 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
     }
 
     // lets sanitize the survey template
-    if(isset($thissurvey['templatedir']))
-    {
+    if(isset($thissurvey['templatedir'])) {
         $templatename=$thissurvey['templatedir'];
     }
     else
@@ -796,7 +795,6 @@ EOD;
     $line = LimeExpressionManager::ProcessString($line, $questionNum, $doTheseReplacements, false, 3, 1, false, true, $bStaticReplacement);
     
     return $line;
-
 }
 
 

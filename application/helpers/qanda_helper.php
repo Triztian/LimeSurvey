@@ -1,4 +1,5 @@
 <?php
+use application\helpers\HtmlTag;
 /*
 * LimeSurvey
 * Copyright (C) 2007-2011 The LimeSurvey Project Team / Carsten Schmitz
@@ -72,12 +73,11 @@ function setNoAnswerMode($thissurvey)
 * @param mixed $ia
 * @return mixed
 */
-function retrieveAnswers($ia)
-{
+function retrieveAnswers($ia) {
     //globalise required config variables
     global $thissurvey; //These are set by index.php
 
-    //$clang = Yii::app()->lang;
+    xdebug_break();
     $clang = Yii::app()->lang;
 
     //DISPLAY
@@ -117,8 +117,7 @@ function retrieveAnswers($ia)
     ,'essentials' => ''
     );
 
-    switch ($ia[4])
-    {
+    switch ($ia[4]) {
         case 'X': //BOILERPLATE QUESTION
             $values = do_boilerplate($ia);
             break;
@@ -177,25 +176,6 @@ function retrieveAnswers($ia)
                     . $clang->gT('Check any that apply').'</span>';
                     $question_text['help'] = $clang->gT('Check any that apply');
                 }
-                //                else
-                //                {
-                //                    if ($maxansw && $minansw)
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->gT("Check between %d and %d answers"), $minansw, $maxansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->gT("Check between %d and %d answers"), $minansw, $maxansw);
-                //                    } elseif ($maxansw)
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->gT("Check at most %d answers"), $maxansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->gT("Check at most %d answers"), $maxansw);
-                //                    } else
-                //                    {
-                //                        $qtitle .= "<br />\n<span class=\"questionhelp\">"
-                //                        . sprintf($clang->ngT("Check at least %d answer","Check at least %d answers",$minansw),$minansw)."</span>";
-                //                        $question_text['help'] = sprintf($clang->ngT("Check at least %d answer","Check at least %d answers",$minansw),$minansw);
-                //                    }
-                //                }
             }
             break;
 
@@ -281,18 +261,18 @@ function retrieveAnswers($ia)
             break;
     } //End Switch
 
-    if (isset($values)) //Break apart $values array returned from switch
-    {
+    //Break apart $values array returned from switch 
+    if (isset($values)) {
         //$answer is the html code to be printed
         //$inputnames is an array containing the names of each input field
-        list($answer, $inputnames)=$values;
+        list($answer, $inputnames) = $values;
     }
 
-    if ($ia[6] == 'Y')
-    {
+    if ($ia[6] == 'Y') {
         $qtitle = '<span class="asterisk">'.$clang->gT('*').'</span>'.$qtitle;
         $question_text['mandatory'] = $clang->gT('*');
     }
+
     //If this question is mandatory but wasn't answered in the last page
     //add a message HIGHLIGHTING the question
     if (($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] != $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['maxstep']) || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] == $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['prevstep'])) {
@@ -318,8 +298,7 @@ function retrieveAnswers($ia)
 
     if (($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] != $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['maxstep']) || ($_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['step'] == $_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['prevstep'])) {
         $file_validation_msg = file_validation_message($ia);
-    }
-    else {
+    } else {
         $file_validation_msg = '';
         $isValid = true;    // don't want to show any validation messages.
     }
@@ -343,8 +322,7 @@ function retrieveAnswers($ia)
         $qtitle_custom = '';
 
         $replace=array();
-        foreach($question_text as $key => $value)
-        {
+        foreach($question_text as $key => $value) {
             $find[] = '{QUESTION_'.strtoupper($key).'}'; // Match key words from template
             $replace[] = $value; // substitue text
         };
@@ -389,6 +367,7 @@ function retrieveAnswers($ia)
     // =====================================================
 
     $qanda=array($qtitle, $answer, 'help', $display, $name, $ia[2], $ia[5], $ia[1] );
+
     //New Return
     return array($qanda, $inputnames);
 }
@@ -2108,23 +2087,19 @@ function do_ranking($ia)
     }
     $ansresult = Yii::app()->db->createCommand($ansquery)->query()->readAll();   //Checked
     $anscount= count($ansresult);
-    if (trim($aQuestionAttributes["max_answers"])!='')
-    {
+    if (trim($aQuestionAttributes["max_answers"])!='') {
         $max_answers=trim($aQuestionAttributes["max_answers"]);
     } else {
         $max_answers=$anscount;
     }
     // Get the max number of line needed
-    if(ctype_digit($max_answers) && intval($max_answers)<$anscount)
-    {
+    if(ctype_digit($max_answers) && intval($max_answers)<$anscount) {
         $iMaxLine=$max_answers;
-    }
-    else
-    {
+    } else {
         $iMaxLine=$anscount;
     }
-    if (trim($aQuestionAttributes["min_answers"])!='')
-    {
+
+    if (trim($aQuestionAttributes["min_answers"])!='') {
         $min_answers=trim($aQuestionAttributes["min_answers"]);
     } else {
         $min_answers=0;
@@ -2139,8 +2114,7 @@ function do_ranking($ia)
     }
     $answer .= '<div class="ranking-answers">
     <ul class="answers-list select-list">';
-    for ($i=1; $i<=$iMaxLine; $i++)
-    {
+    for ($i=1; $i<=$iMaxLine; $i++) {
         $myfname=$ia[1].$i;
         $answer .= "\n<li class=\"select-item\">";
         $answer .="<label for=\"answer{$myfname}\">";
@@ -2172,6 +2146,7 @@ function do_ranking($ia)
         $answer .="</li>";
         $inputnames[]=$myfname;
     }
+
     $answer .="</ul>"
         . "<div style='display:none' id='ranking-{$ia[0]}-maxans'>{".$max_answers."}</div>"
         . "<div style='display:none' id='ranking-{$ia[0]}-minans'>{".$min_answers."}</div>"
@@ -2219,7 +2194,6 @@ function do_ranking($ia)
     ."</script>\n";
     return array($answer, $inputnames);
 }
-
 
 // ---------------------------------------------------------------
 // TMSW TODO - Can remove DB query by passing in answer list from EM
@@ -3364,8 +3338,7 @@ function do_multiplenumeric($ia)
 
 
 // ---------------------------------------------------------------
-function do_numerical($ia)
-{
+function do_numerical($ia) {
     global $thissurvey;
 
     $clang = Yii::app()->lang;
@@ -3373,52 +3346,43 @@ function do_numerical($ia)
     $answertypeclass = "numeric";
     $checkconditionFunction = "fixnum_checkconditions";
     $aQuestionAttributes = getQuestionAttributeValues($ia[0], $ia[4]);
+
     if (trim($aQuestionAttributes['prefix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']])!='') {
         $prefix=$aQuestionAttributes['prefix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']];
         $extraclass .=" withprefix";
-    }
-    else
-    {
+    } else {
         $prefix = '';
     }
+
     if (trim($aQuestionAttributes['suffix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']])!='') {
         $suffix=$aQuestionAttributes['suffix'][$_SESSION['survey_'.Yii::app()->getConfig('surveyID')]['s_lang']];
         $extraclass .=" withsuffix";
-    }
-    else
-    {
+    } else {
         $suffix = '';
     }
-    if (intval(trim($aQuestionAttributes['maximum_chars']))>0 && intval(trim($aQuestionAttributes['maximum_chars']))<20)
-    {
+
+    if (intval(trim($aQuestionAttributes['maximum_chars']))>0 && intval(trim($aQuestionAttributes['maximum_chars']))<20) {
         // Only maxlength attribute, use textarea[maxlength] jquery selector for textarea
         $maximum_chars= intval(trim($aQuestionAttributes['maximum_chars']));
         $maxlength= " maxlength='{$maximum_chars}' ";
         $extraclass .=" maxchars maxchars-".$maximum_chars;
-    }
-    else
-    {
+    } else {
         $maxlength= " maxlength='20' ";
     }
-    if (trim($aQuestionAttributes['text_input_width'])!='')
-    {
+
+    if (trim($aQuestionAttributes['text_input_width'])!='') {
         $tiwidth=$aQuestionAttributes['text_input_width'];
         $extraclass .=" inputwidth-".trim($aQuestionAttributes['text_input_width']);
-    }
-    else
-    {
+    } else {
         $tiwidth=10;
     }
 
-    if (trim($aQuestionAttributes['num_value_int_only'])==1)
-    {
+    if (trim($aQuestionAttributes['num_value_int_only'])==1) {
         $acomma="";
         $extraclass .=" integeronly";
         $answertypeclass .= " integeronly";
         $integeronly=1;
-    }
-    else
-    {
+    } else {
         $acomma=getRadixPointData($thissurvey['surveyls_numberformat']);
         $acomma = $acomma['separator'];
         $integeronly=0;
@@ -3428,10 +3392,10 @@ function do_numerical($ia)
     $sSeparator = getRadixPointData($thissurvey['surveyls_numberformat']);
     $sSeparator = $sSeparator['separator'];
     // Fix the display value : Value is stored as decimal in SQL then return dot and 0 after dot. Seems only for numerical question type
-    if(strpos($fValue,"."))
-    {
+    if(strpos($fValue,".")) {
         $fValue=rtrim(rtrim($fValue,"0"),".");
     }
+
     $fValue = str_replace('.',$sSeparator,$fValue);
 
     if ($thissurvey['nokeyboard']=='Y')
@@ -3439,21 +3403,48 @@ function do_numerical($ia)
         includeKeypad();
         $extraclass .=" inputkeypad";
         $answertypeclass .= " num-keypad";
-    }
-    else
-    {
+    } else {
         $kpclass = "";
     }
-    // --> START NEW FEATURE - SAVE
-    $answer = "<p class='question answer-item text-item numeric-item {$extraclass}'>"
-    . " <label for='answer{$ia[1]}' class='hide label'>{$clang->gT('Answer')}</label>\n$prefix\t"
-    . "<input class='text {$answertypeclass}' type=\"text\" size=\"$tiwidth\" name=\"$ia[1]\"  title=\"".$clang->gT('Only numbers may be entered in this field.')."\" "
-    . "id=\"answer{$ia[1]}\" value=\"{$fValue}\" onkeyup=\"{$checkconditionFunction}(this.value, this.name, this.type,'onchange',{$integeronly})\" "
-    . " {$maxlength} />\t{$suffix}\n</p>\n";
-    // --> END NEW FEATURE - SAVE
 
-    $inputnames[]=$ia[1];
-    $mandatory=null;
+    $asSlider = (bool)$aQuestionAttributes['numeric_as_slider'];
+    if ($asSlider) {
+        $aQuestionAttributes['min_num_value_n'] = 0.0;
+        $aQuestionAttributes['max_num_value_n'] = 1.0;
+    }
+
+    xdebug_break();
+    $labelHtml = new HtmlTag('label', array(
+        'for'   => "answer{$ia[1]}",
+        'class' => "hide label"
+    ), false, array(
+        "{$clang->gT('Answer')}"
+    ));
+
+    $inputHtml = new HtmlTag('input', array(
+        'id'        => "answer{$ia[1]}",
+        'class'     => "text {$answertypeclass}",
+        'type'      => $asSlider ? 'range' : 'text',
+        'min'       => $aQuestionAttributes['min_num_value_n'],
+        'max'       => $aQuestionAttributes['max_num_value_n'],
+        'step'      => 0.01,
+        'size'      => $tiwidth,
+        'name'      => $ia[1],
+        'title'     => $clang->gT('Only numbers may be entered in this field.'),
+        'value'     => "{$fValue}",
+        'onkeyup'   => "{$checkconditionFunction}(this.value, this.name, this.type,'onchange',{$integeronly})"
+    ), true);
+
+    $ansHtml = new HtmlTag('p', array(
+        'class' => "question answer-item text-item numeric-item {$extraclass}"
+    ), false, array(
+        $labelHtml,
+        $inputHtml
+    ));
+
+    $inputnames[] = $ia[1];
+    $mandatory = null;
+    $answer = (string) $ansHtml;
     return array($answer, $inputnames, $mandatory);
 }
 

@@ -1,10 +1,7 @@
 <?php
 
 
-    abstract class QuestionPluginBase extends PluginBase{
-        
-        
-        
+    abstract class QuestionPluginBase extends PluginBase {
         
         /**
          * Lists the question objects supported by the plugin.

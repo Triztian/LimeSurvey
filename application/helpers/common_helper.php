@@ -11,6 +11,7 @@
 * See COPYRIGHT.php for copyright notices and details.
 */
 Yii::import('application.helpers.sanitize_helper', true);
+Yii::import('application.libraries.Limesurvey_lang');
 
 /**
  * Translation helper function.
@@ -19,7 +20,6 @@ Yii::import('application.helpers.sanitize_helper', true);
  */
 function gT($string, $escapemode = 'html')
 {
-    Yii::import('application.libraries.Limesurvey_lang');
     if (isset(App()->lang))
     {
         return App()->lang->gT($string, $escapemode);
@@ -37,7 +37,6 @@ function eT($string, $escapemode = 'html')
 
 function ngT($single, $plural, $number, $escapemode = 'html')
 {
-    Yii::import('application.libraries.Limesurvey_lang');
     return App()->lang->ngT($single, $plural, $number, $escapemode);
 }
 /**
@@ -623,11 +622,9 @@ function getMaxQuestionOrder($gid,$surveyid)
 * @param string $input containing unique character representing each question type.
 * @return string containing the class name for a given question type.
 */
-function getQuestionClass($input)
-{
-
-    switch($input)
-    {   // I think this is a bad solution to adding classes to question
+function getQuestionClass($input) {
+    switch($input) {   
+        // I think this is a bad solution to adding classes to question
         // DIVs but I can't think of a better solution. (eric_t_cruiser)
 
         case 'X': return 'boilerplate';     //  BOILERPLATE QUESTION
@@ -2510,80 +2507,8 @@ function buildLabelSetCheckSumArray()
 * @param $iQID The question ID
 * @return array$bOrderByNative=>value, attribute=>value} or false if the question ID does not exist (anymore)
 */
-function getQuestionAttributeValues($iQID)
-{
+function getQuestionAttributeValues($iQID) {
     return QuestionAttribute::model()->getQuestionAttributes($iQID);
-#    static $cache = array();
-#    static $availableattributesarr = null;
-#    $iQID = sanitize_int($iQID);
-
-#    if (isset($cache[$iQID])) {
-#        return $cache[$iQID];
-#    }
-#    $oQuestion = Question::model()->find("qid=:qid",array('qid'=>$iQuestionID)); // Maybe take parent_qid attribute before this qid attribute
-#    if (!$oQuestion) // Question was deleted while running the survey
-#    {
-#        $cache[$iQID] = false;
-#        return false;
-#    }
-#    else
-#    {
-#        $type = $oQuestion->type;
-#        $surveyid = $oQuestion->type;
-#        $row = $oQuestion->getAttributes();
-#    }
-#    $type = $row['type'];
-#    $surveyid = $row['sid'];
-
-#    $aLanguages = array_merge((array)Survey::model()->findByPk($surveyid)->language, Survey::model()->findByPk($surveyid)->additionalLanguages);
-
-    //Now read available attributes, make sure we do this only once per request to save
-    //processing cycles and memory
-#    if (is_null($availableattributesarr)) $availableattributesarr = questionAttributes();
-#    if (isset($availableattributesarr[$type]))
-#    {
-#        $aAvailableAttributes = $availableattributesarr[$type];
-#    }
-#    else
-#    {
-#        $cache[$iQID] = array();
-#        return array();
-#    }
-
-#    $aResultAttributes = array();
-#    foreach($aAvailableAttributes as $attribute){
-#        if ($attribute['i18n'])
-#        {
-#            foreach ($aLanguages as $sLanguage)
-#            {
-#                $aResultAttributes[$attribute['name']][$sLanguage]=$attribute['default'];
-#            }
-#        }
-#        else
-#        {
-#            $aResultAttributes[$attribute['name']]=$attribute['default'];
-#        }
-#    }
-
-#    $result = QuestionAttribute::model()->findAllByAttributes(array('qid' => $iQID));
-#    foreach ($result as $row)
-#    {
-#        $row = $row->attributes;
-#        if (!isset($aAvailableAttributes[$row['attribute']]))
-#        {
-#            continue; // Sort out attributes not belonging to this question
-#        }
-#        if (!($aAvailableAttributes[$row['attribute']]['i18n']))
-#        {
-#            $aResultAttributes[$row['attribute']]=$row['value'];
-#        }
-#        elseif(!empty($row['language']))
-#        {
-#            $aResultAttributes[$row['attribute']][$row['language']]=$row['value'];
-#        }
-#    }
-#    $cache[$iQID] = $aResultAttributes;
-#    return $aResultAttributes;
 }
 
 /**
@@ -2616,15 +2541,13 @@ function getQuestionAttributeValue($questionAttributeArray, $attributeName, $lan
 *
 * @param mixed $returnByName If set to true the array will be by attribute name
 */
-function questionAttributes($returnByName=false)
-{
+function questionAttributes($returnByName=false) {
     // Use some static
     static $qattributes=false;
     static $qat=false;
     $clang = Yii::app()->lang;
 
-    if (!$qattributes)
-    {
+    if (!$qattributes) {
         //For each question attribute include a key:
         // name - the display name
         // types - a string with one character representing each question typy to which the attribute applies
@@ -3071,14 +2994,6 @@ function questionAttributes($returnByName=false)
         "help"=>$clang->gT('Maximum value of the numeric input'),
         "caption"=>$clang->gT('Maximum value'));
 
-        //    $qattributes["max_num_value_sgqa"]=array(
-        //    "types"=>"K",
-        //    'category'=>$clang->gT('Logic'),
-        //    'sortorder'=>100,
-        //    'inputtype'=>'text',
-        //    "help"=>$clang->gT('Enter the SGQA identifier to use the total of a previous question as the maximum for this question'),
-        //    "caption"=>$clang->gT('Max value from SGQA'));
-
         $qattributes["maximum_chars"]=array(
         "types"=>"STUNQK:;",
         'category'=>$clang->gT('Input'),
@@ -3103,21 +3018,32 @@ function questionAttributes($returnByName=false)
         "help"=>$clang->gT('The sum of the multiple numeric inputs must be greater than this value'),
         "caption"=>$clang->gT('Minimum sum value'));
 
-        $qattributes["min_num_value_n"]=array(
-        "types"=>"NK",
-        'category'=>$clang->gT('Input'),
-        'sortorder'=>100,
-        'inputtype'=>'integer',
-        "help"=>$clang->gT('Minimum value of the numeric input'),
-        "caption"=>$clang->gT('Minimum value'));
+        $qattributes["min_num_value_n"] = array(
+            "types"=>"NK",
+            'category'=>$clang->gT('Input'),
+            'sortorder'=>100,
+            'inputtype'=>'integer',
+            "help"=>$clang->gT('Minimum value of the numeric input'),
+            "caption"=>$clang->gT('Minimum value')
+        );
 
-        //    $qattributes["min_num_value_sgqa"]=array(
-        //    "types"=>"K",
-        //    'category'=>$clang->gT('Logic'),
-        //    'sortorder'=>100,
-        //    'inputtype'=>'text',
-        //    "help"=>$clang->gT('Enter the SGQA identifier to use the total of a previous question as the minimum for this question'),
-        //    "caption"=>$clang->gT('Minimum value from SGQA'));
+        $qattributes["min_num_value_n_label"]=array(
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Display'),
+            'sortorder' =>101,
+            'inputtype' =>'text',
+            "help"      =>$clang->gT('Label tha represents the minimum value.'),
+            "caption"   =>$clang->gT('Minimum label')
+        );
+
+        $qattributes["max_num_value_n_label"]=array(
+            "types"     =>"NK",
+            'category'  =>$clang->gT('Display'),
+            'sortorder' =>101,
+            'inputtype' =>'text',
+            "help"      =>$clang->gT('Label tha represents the maximum value.'),
+            "caption"   =>$clang->gT('Maximum label')
+        );
 
         $qattributes["multiflexible_max"]=array(
         "types"=>":",
@@ -3165,14 +3091,6 @@ function questionAttributes($returnByName=false)
         "help"=>$clang->gT('Present answer options in reverse order'),
         "caption"=>$clang->gT('Reverse answer order'));
 
-        //    $qattributes["num_value_equals_sgqa"]=array(
-        //    "types"=>"K",
-        //    'category'=>$clang->gT('Logic'),
-        //    'sortorder'=>100,
-        //    'inputtype'=>'text',
-        //    "help"=>$clang->gT('SGQA identifier to use total of previous question as total for this question'),
-        //    "caption"=>$clang->gT('Value equals SGQA'));
-
         $qattributes["num_value_int_only"]=array(
         "types"=>"N",
         'category'=>$clang->gT('Input'),
@@ -3198,6 +3116,22 @@ function questionAttributes($returnByName=false)
         "help"=>$clang->gT('Allow only numerical input'),
         "caption"=>$clang->gT('Numbers only')
         );
+
+        $qattributes['numeric_as_slider'] = array(
+            'types'     => 'N',
+            'category'  => $clang->gT('Display'),
+            'default'   => false,
+            'inputtype' => 'singleselect',
+            'options'   => array(
+                0 => $clang->gT('No'),
+                1 => $clang->gT('Yes')
+            ),
+            'caption'   => $clang->gT('Display as slider'),
+            'help'      => $clang->gT('Display the numeric as a HTML5 range slider.'),
+            'sortorder' => 151
+        );
+
+        $qattributes[''] = array();
 
         $qattributes['show_totals'] =    array(
         'types' =>    ';',
@@ -3507,7 +3441,7 @@ function questionAttributes($returnByName=false)
 
 
         $qattributes["dropdown_size"]=array(
-        "types"=>"!",   // TODO add these later?  "1F",
+        "types"=>"!",               // TODO add these later?  "1F",
         'category'=>$clang->gT('Display'),
         'sortorder'=>200,
         'inputtype'=>'text',
@@ -3822,6 +3756,7 @@ function questionAttributes($returnByName=false)
         "help"=>$clang->gT("Is no answer (missing) allowed when either 'Equals sum value' or 'Minimum sum value' are set?"),
         "caption"=>$clang->gT("Value range allows missing"));
     }
+
     //This builds a more useful array (don't modify)
     if ($returnByName==false)
     {

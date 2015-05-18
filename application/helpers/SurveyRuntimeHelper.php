@@ -169,7 +169,8 @@ class SurveyRuntimeHelper {
     * @param mixed $surveyid
     * @param mixed $args
     */
-    function run($surveyid,$args) {
+    function run($surveyid, $args) {
+        xdebug_break();
         global $errormsg;
         extract($args);
 
@@ -414,6 +415,7 @@ class SurveyRuntimeHelper {
             if ($surveyMode != 'survey' && $_SESSION[$LEMsessid]['step'] == 0)
             {
                 $_SESSION[$LEMsessid]['test']=time();
+                xdebug_break();
                 display_first_page();
                 Yii::app()->end(); // So we can still see debug messages
             }
@@ -816,12 +818,12 @@ class SurveyRuntimeHelper {
 
         $okToShowErrors = (!$previewgrp && (isset($invalidLastPage) || $_SESSION[$LEMsessid]['prevstep'] == $_SESSION[$LEMsessid]['step']));
 
+        xdebug_break();
         Yii::app()->getController()->loadHelper('qanda');
         setNoAnswerMode($thissurvey);
 
         //Iterate through the questions about to be displayed:
         $inputnames = array();
-
         foreach ($_SESSION[$LEMsessid]['grouplist'] as $gl)
         {
             $gid = $gl['gid'];
@@ -836,6 +838,7 @@ class SurveyRuntimeHelper {
                 }
             }
 
+            //
             // TMSW - could iterate through LEM::currentQset instead
             foreach ($_SESSION[$LEMsessid]['fieldarray'] as $key => $ia)
             {
@@ -848,8 +851,10 @@ class SurveyRuntimeHelper {
                     {
                         continue;
                     }
+
+                    xdebug_break();
                     $qidattributes = getQuestionAttributeValues($ia[0], $ia[4]);
-                    if ($ia[4] != '*' && ($qidattributes === false || !isset($qidattributes['hidden']) || $qidattributes['hidden'] == 1))
+                    if ($ia[4] != '*' && ($qidattributes === false || $qidattributes['hidden'] == 1))
                     {
                         continue;
                     }
@@ -858,8 +863,8 @@ class SurveyRuntimeHelper {
                     // TMSW - can content of retrieveAnswers() be provided by LEM?  Review scope of what it provides.
                     // TODO - retrieveAnswers is slow - queries database separately for each question. May be fixed in _CI or _YII ports, so ignore for now
                     list($plus_qanda, $plus_inputnames) = retrieveAnswers($ia, $surveyid);
-                    if ($plus_qanda)
-                    {
+                    xdebug_break();
+                    if ($plus_qanda) {
                         $plus_qanda[] = $ia[4];
                         $plus_qanda[] = $ia[6]; // adds madatory identifyer for adding mandatory class to question wrapping div
                         // Add a finalgroup in qa array , needed for random attribute : TODO: find a way to have it in new quanda_helper in 2.1

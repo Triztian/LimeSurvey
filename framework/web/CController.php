@@ -282,10 +282,9 @@ class CController extends CBaseController
 	 */
 	public function runActionWithFilters($action,$filters)
 	{
-		if(empty($filters))
+		if(empty($filters)) {
 			$this->runAction($action);
-		else
-		{
+		} else {
 			$priorAction=$this->_action;
 			$this->_action=$action;
 			CFilterChain::create($this,$action,$filters)->run();

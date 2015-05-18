@@ -1045,6 +1045,8 @@ class questions extends Survey_Common_Action
         $qid = sanitize_int($qid);
         $LEMdebugLevel=0;
 
+        xdebug_break();
+
         Yii::app()->loadHelper("qanda");
         Yii::app()->loadHelper("surveytranslator");
 
@@ -1102,7 +1104,12 @@ class questions extends Survey_Common_Action
         $qseq = LimeExpressionManager::GetQuestionSeq($qid);
         $moveResult = LimeExpressionManager::JumpTo($qseq + 1, true, false, true);
 
-        $answers = retrieveAnswers($ia,$surveyid);
+        xdebug_break();
+        $answers = retrieveAnswers($ia, $surveyid);
+
+        xdebug_break();
+        var_dump($answers);
+
 
         if (!$thissurvey['template'])
             $thistpl = getTemplatePath(Yii::app()->getConfig('defaulttemplate'));
